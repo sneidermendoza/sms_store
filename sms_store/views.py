@@ -6,6 +6,8 @@ from django.contrib.auth import authenticate  # linea de codigo para autenticar 
 from django.contrib.auth import login # importacion para loguear a un usuario
 from django.contrib.auth import logout # importacion para salir de la sesion donde estas logueado
 
+from django.contrib.auth.models import User # para crear nuevos usuarios
+
 from .forms import RegisterForm # para registrar a un usuario (formulario de django)
 
 
@@ -44,8 +46,16 @@ def logout_view(request): # funcion para salir exitosamente o desloguear
     messages.success(request, 'Sesion cerrada exitosamente')
     return redirect('login')
 
-def register(request):
-    form = RegisterForm()
+def register(request):# para crear nuevos usuarisos
+    form = RegisterForm(request.POST or None)
+    if request.method == 'POST' and form.is_valid():
+        
+        user = form.save()
+        if user:
+            login(request, user)
+            messages.success(request, 'Usuario creado exitosamente')
+            return redirect('index') 
+
     return render(request, 'users/register.html', {
         'form': form
     })
