@@ -25,6 +25,9 @@ def index(request):
     })
 
 def login_view(request): # funcion para logear y autenticar usuarios
+    if request.user.is_authenticated:
+        return redirect('index')
+    
     if request.method == 'POST':
         username =request.POST.get('username') #diccionario
         password =request.POST.get('password')
@@ -47,6 +50,9 @@ def logout_view(request): # funcion para salir exitosamente o desloguear
     return redirect('login')
 
 def register(request):# para crear nuevos usuarisos
+    if request.user.is_authenticated:
+        return redirect('index')
+    
     form = RegisterForm(request.POST or None)
     if request.method == 'POST' and form.is_valid():
         
