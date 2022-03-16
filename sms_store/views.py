@@ -1,3 +1,4 @@
+from itertools import product
 from django.shortcuts import render
 from django.shortcuts import redirect # importacion para redirigir a una pagina 
 
@@ -6,22 +7,25 @@ from django.contrib.auth import authenticate  # linea de codigo para autenticar 
 from django.contrib.auth import login # importacion para loguear a un usuario
 from django.contrib.auth import logout # importacion para salir de la sesion donde estas logueado
 
-from django.contrib.auth.models import User # para crear nuevos usuarios
+from django.contrib.auth.models import User
+
+from products.models import Products # para crear nuevos usuarios
 
 from .forms import RegisterForm # para registrar a un usuario (formulario de django)
+
+from products.models import Products
 
 
 
 def index(request):
+
+    products = Products.objects.all().order_by('-id')
+
     return render(request,'index.html',{
         'message': 'Lista de productos',
         'title': 'productos',
-        'products': [
-            {'title': 'Playera', 'price': 5, 'stock': True},
-            {'title': 'Camisa', 'price': 7, 'stock': True},
-            {'title': 'Mochila', 'price': 20, 'stock': False},
-            {'title': 'Laptop', 'price': 500, 'stock': True}
-        ]
+        'products': products,
+        
     })
 
 def login_view(request): # funcion para logear y autenticar usuarios
