@@ -8,6 +8,7 @@ class Products(models.Model):
     description = models.TextField()
     price = models.DecimalField(max_digits=8, decimal_places=2, default=0.0)
     slug =models.SlugField(null=False, blank=False, unique=True)
+    image = models.ImageField(upload_to='products/', null=False, blank=False)
     created_at = models.DateTimeField(auto_now_add=True)
 
     # def save(self, *args, **kwargs):
@@ -19,9 +20,12 @@ class Products(models.Model):
 
 def set_slug(sender, instance, *args, **kwargs): #callback
     if instance.title and not instance.slug:
-        slug = slugify(
-            '{}-{}'.format(instance.title, str(uuid.uuid4()) [:8])
-        )
+        slug = slugify(instance.title)
+        
+        while Products.objects.filter(slug=slug).exists():
+            slug = slugify(
+                '{}-{}'.format(instance.title, str(uuid.uuid4()) [:8])
+            )
     instance.slug = slug
 
 pre_save.connect(set_slug, sender=Products)
